@@ -1,0 +1,33 @@
+<style>
+
+.component_2{
+    left: 40vw;
+    top: 40vh;
+    width: 10vw;
+    color: gold;
+    padding: 10px;
+    text-align: center;
+    border-radius: 7vw;
+    align-items: center;
+    position : absolute;
+    background: rgb(15, 15, 15);
+}
+
+</style>
+
+<div id = "component_2" class="component_2">
+    Conditional Component 2
+
+    <div id = "update_div_1">ON</div>
+
+    <button id = "got_update_1" onclick="update_1_event()">Try Update Event</button>
+
+</div>
+
+<script>
+
+function got_upupdate_1_eventdate_1(){
+    socket.emit("get_update_1");
+};
+
+</script>
