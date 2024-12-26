@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+
+<script src = "/socket.io/socket.io.js" ></script>
+
+<style>
+
+.body, html{
+    background-color: rgb(36, 36, 36);
+}
+
+.button_get_table_data{
+    left: 20vw;
+    top : 30vh;
+    height: 3vh;
+    width: 7vw;
+    color: gold;
+    font-size: 0.75vw;
+    position: absolute;
+    border-radius: 25px;
+    border: 3px solid red;
+    background-color: rgb(36, 36, 36);
+}
+
+.button_get_users_data_names{
+    left: 40vw;
+    top : 30vh;
+    height: 3vh;
+    width: 7vw;
+    color: gold;
+    font-size: 0.75vw;
+    position: absolute;
+    border-radius: 25px;
+    border: 3px solid red;
+    background-color: rgb(36, 36, 36);
+
+}
+
+.button_get_table_data:hover{
+    cursor      : pointer;
+    box-shadow  : 1px 0px 2px 0px 5px gold;
+}
+
+.container_1{
+    position: absolute;
+    left: 20vw;
+    top : 20vh;
+}
+
+.container_2_user_data{
+    position: absolute;
+    left: 20vw;
+    top : 20vh;
+}
+
+.test_table{
+    border-radius   : 7px;
+    background      : gray;
+    color           : black;
+    border          : 3px solid gold;
+}
+
+.test_table td{
+    margin: 0.5vh;
+    width: 10vw;
+}
+
+.post_data_input{
+    height          : 2vh;
+    width           : 10vw;
+    font-weight     : 900;
+    border-radius   : 7px;
+}
+
+.container_error_notification{
+    display         : none;
+    border-radius   : 7px;
+    border          : 3px solid red;
+    background      : rgba(36, 36, 36, 0.5);
+}
+
+.simple_post_data{
+    left        : 30vw;
+    top         : 20vh;
+    position    : absolute;
+}
+
+.got_update_1{
+    position    : absolute;
+    left        : 30vw;
+    top         : 10vh;
+}
+
+.show_other_container_test{
+    border-radius   : 7px;
+    left            : 30vw;
+    top             : 10vh;
+    height          : 50px;
+    width           : 100px;
+    display         : none;
+    text-align      : center;
+    align-items     : center;
+    vertical-align  : middle;
+    font-size       : 1.17vw;
+    color           : white;
+    position        : absolute;
+    border          : 3px solid greenyellow;
+}
+
+.test_single_data_update{
+    left            : 40vw;
+    top             : 10vh;
+    width           : 7vw;
+    height          : 5vh;
+    font-weight     : 900;
+    border-radius   : 7px;
+    padding         : 3px;
+    display         : none;
+    font-size       : 1.17vw;
+    align-items     : center;
+    color           : gold;
+    align-items     : center;
+    vertical-align  : middle;
+    position        : absolute;
+    border          : 3px solid gold;
+}
+
+</style>
+
+<script src="js/stark_framework.js"></script>
+
+
+<body>
+
+    <div id = "container_1" class="container_1"></div>
+
+    <div id = "container_error_notification" class="container_error_notification"></div>
+
+    <div id = "container_2_user_data" class="container_2_user_data"></div>
+
+    <button type="button" id = "got_update_1" class="got_update_1" onclick="got_update_1_event_data_1()">Try Update Event</button>
+
+    <button id = "button_get_table_data" class="button_get_table_data" onclick="get_table_data()">Get Table Data</button>
+    <button id = "button_get_table_data" class="button_get_users_data_names" onclick="get_users_data_names()">Get User Data</button>
+    
+    <form id = "simple_post_data" class="simple_post_data" method="POST">
+        <input type="text" id = "post_data_input" class="post_data_input">
+        <!-- Do NOT add type="submit", keep form buttons as type "button" -->
+        <button type="button" id ="button_post_data" class="button_post_data" onclick="button_post_data_1()">Post User Data</button>
+    </form>
+
+    <div id = "show_other_container_test" class="show_other_container_test">Show other container 2</div>
+
+    <div id = "test_single_data_update" class="test_single_data_update"></div>
+
+</body>
+
+<script>
+
+// This may go away, still testing how to link functions (default versus custom) : 
+var my_function_maps =
+[
+    {
+        "name"  : "new_stark_fx_1",
+        "fx"    : function fx_1(){
+                    new_stark_function_1()
+                },
+        "helper_desc" : "for table mid screen"
+
+    },
+    {
+        "name"  : "new_stark_fx_2",
+        "fx"    : function fx_2(){
+                    new_stark_function_2()
+            },
+        "helper_desc" : "for table mid screen"
+        
+    }
+]
+
+
+function got_update_1_event_data_1(){
+    socket.emit("get_update_1");
+};
+
+function get_table_data(){
+    socket.emit("get_table_data_1");
+};
+
+socket.on("table_1_test", function(package_data){
+    alert("Got table_1_test = " + JSON.stringify(package_data))
+    document.getElementById("button_get_table_data").style.display = "none";
+    create_stark_table(package_data);
+});
+
+socket.on("update_value_test", function(package_data){
+    create_stark_table(package_data);
+});
+
+// Custom Update Data Event : 
+socket.on("got_update_1", function(package_data){
+   
+    // Option #1 : vanilla JS (without dynamic stark functions)
+    stark_show_divs(package_data);
+
+    document.getElementById("test_single_data_update").innerText = package_data.value;
+
+    // Option #2 : use stark framework with simple dynamic code updates :
+    // update_stark_value(package_data); // General (default) update single state / data event
+    
+    // custom_company_function(package_data);   
+
+    stark_hide_divs(package_data);
+
+});
+
+
+function custom_company_function(package_data){
+    // alert("Custom Data Event , " + JSON.stringify(package_data))
+};
+
+function new_stark_function_1(){
+    alert("Test function 1")
+};
+
+function new_stark_function_2(){
+    alert("Test function 2")
+};
+
+function get_users_data_names(){
+    socket.emit("get_users_data_names")
+};
+
+var name_of_platform_cookie = "YourPlatformjwtCookieName"; // replace with your value here
+var all_cookies = document.cookie;
+var all_cookies_array = all_cookies.split(';');
+    // Look into bcrypt + jsonwebtoken for user login, auth, ect
+
+function get_user_cookie_from_storage(){
+
+    for(var i = 0 ; i < all_cookies_array.length ; i++){
+        
+        var current_ck_full = all_cookies_array[i];
+        curr_full_split = current_ck_full.split('=');
+        stored_cookie_name = curr_full_split[0];
+    
+        if( stored_cookie_name.includes(name_of_platform_cookie) ) {
+            return curr_full_split[1];
+        };
+        
+    };
+
+};
+
+function button_post_data_1(){
+
+    var this_user_cookie = get_user_cookie_from_storage();
+    
+    // alert("get_user_cookie_from_storage value = " + this_user_cookie);
+
+    var socket_package_value = document.getElementById("post_data_input").innerText; 
+    
+    var socket_package = {
+        "user_ck"   : this_user_cookie,
+        "value"     : socket_package_value
+    };
+
+    socket.emit("post_data_1", socket_package);
+};
+
+socket.on("got_users_data_names", function(data){
+    create_stark_table(data); // Create from db users data
+    // alert("get_users_data_names data = " + JSON.stringify(data));
+});
+
+socket.on("posted_data_1", function(data){
+    alert("posted_data_1 , msg = " + JSON.stringify(data));
+});
+
+
+</script>
+
+
+<%- include('./partials/component_0.ejs') %>
+
+<!-- Try not to use for loops here and instead call those via socket IO / websocket events -->
+<% if ( render_component_1 == 1 ){ %>
+    <%- include('home_page_logged_out_components/component_1.ejs') %>
+<% } %>
+
+<% if ( render_component_2 == 1 ){ %>
+    <%- include('./partials/component_2.ejs') %>
+<% } %>
+
+</html>

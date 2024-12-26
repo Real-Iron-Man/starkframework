@@ -1,0 +1,18 @@
+<style>
+
+.got_table_1_data{
+    position    : absolute;
+    left        : 40vw;
+    top         : 30vh;
+}
+
+</style>
+
+
+<script>
+
+socket.on("got_table_1_data", function(data){
+    create_stark_table(data);
+});
+
+</script>
