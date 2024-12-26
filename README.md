@@ -50,7 +50,7 @@ proof a "paradigm shift" is needed
 <br/>
 
 
-<img src='Stark Framework Architecture.png' style ="width : 60vw">
+<img src='Stark_Framework_Architecture.png' style ="width : 60vw">
 <br/>
 <br/>
 <br/>
