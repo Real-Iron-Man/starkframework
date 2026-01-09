@@ -2,7 +2,6 @@ const express = require('express')
 const app = express()                              // Set application variable to express
 var server = require('http').Server(app)           // Set main Server passing in app which is set to express
 var io = require('socket.io')(server)         
-// Express framework - example from https://expressjs.com/en/starter/hello-world.html
 
 const server_port = 8080;
 var mysql = require('mysql');
@@ -10,22 +9,22 @@ var mysql = require('mysql');
 const fs = require("fs");
 
 try {
-    require('dotenv').config(); // Still need for offline or development mode
+    require('dotenv').config();                     // Still need for offline or development mode
 } catch (error) {
     console.log(`❌ Catch Error : Could not setup dotenv, full error = ${error.stack}` );
 };
 
-// Do NOT publish .env file with pw or configs into your source
+// Do NOT publish .env file with pw or configs into your source repo
+var db_port         = 3306;
 var db_pw           = process.env.db_pw;
 var db_name         = process.env.db_name;
 var db_host         = process.env.db_host;
-var db_port         = 3306
 var db_user_name    = process.env.db_user_name;
 
 var is_socket_debug_on = process.env.is_socket_debug_on;
 if(!is_socket_debug_on){
     is_socket_debug_on = false;
-}
+};
 
 var db = mysql.createPool({
     host            : db_host,
@@ -37,15 +36,6 @@ var db = mysql.createPool({
     timeout         : 60 * 60 * 1000,
     port            : db_port,
     // ssl             : { ca: fs.readFileSync("utils/db/DigiCertGlobalRootCA.crt.pem") }
-})
-
-
-db.query("select COUNT(1+1) as sum from user", function(error, result){
-    if(error){
-        console.log("DB setup ERROR, error = " + error);
-    }else{
-        console.dir("DB setup OK");
-    };
 });
 
 var db_utils = require('./utils/db/db_utils.js');
@@ -66,7 +56,29 @@ app.get("/", page_routes);
 
 server.listen(server_port, function(){
     console.log("✅ server started on " + server_port);
+    console.log("\n\n\n Click this to go to app : http://localhost:8080/")
+    test_db_connection();
 });
+
+function test_db_connection(){
+    db.query("select COUNT(1+1) as sum from user", function(error, result){
+        if(error){
+            console.log("DB setup ERROR, error = " + error);
+        }else{
+            console.dir("DB setup OK");
+        };
+    });
+};
+
+function send_socket_error_frontend(error_obj, socket){
+    try {
+        socket.emit("io_error", error_obj);
+    } catch (error) {
+        console.log("Error : could not send error message to user");
+        return;
+    };
+
+};
 
 var user_utils = require('./utils/users/user_utils.js')
 
@@ -170,45 +182,58 @@ io.on('connection', function(socket){
     });
 
     // Example of getting data from a DB via 'IO GET event' : 
-    socket.on("get_users_data_names", async function(){
+    socket.on("get_users_data_names", async function(socket_data){
 
-        var user_data = await user_utils.get_user_names(db);
+        try {
+            var error_obj;
+            
+            console.log("Socket offset pagination = " + JSON.stringify(socket_data));
 
-        var error_obj;
+            var db_offset = socket_data.db_offset;
+            console.log("Socket offset value = " + JSON.stringify(db_offset));
 
-        if(!user_data){
+            var user_data = await user_utils.get_user_names(db, db_offset);
 
-            error_obj = {
-                "error_code"    : 1,
-                "error_msg"     : "user data error",
-                "error_event"   : "place",  // "place" = place into id of this package, "error_div" = place into error notification div
-                "error_div"     : "container_error_notification"
+            console.dir("user_data found = " + JSON.stringify(user_data));
+
+            if(!user_data){
+
+                error_obj = {
+                    "error_code"    : 1,
+                    "error_msg"     : "user data error",
+                    "error_event"   : "place",  // "place" = place into id of this package, "error_div" = place into error notification div
+                    "error_div"     : "container_error_notification"
+                };
+
+                send_socket_error_frontend(error_obj);
+
             };
 
+            var socket_package = {
+                "id"                : "user_data", 
+                "name"              : "user_data",
+                "className"         : "user_data",
+                "event_type"        : "append",
+                "appendToDiv"       : "container_2_user_data",
+                "data"              : user_data,
+                "show_divs"         : [],
+                "hide_divs"         : [],
+                "error"             : error_obj,
+            };
+
+            socket.emit("got_users_data_names", socket_package);
+
+        } catch (error) {
+            return;
         };
-
-        console.dir("user_data found = " + JSON.stringify(user_data));
-
-        var socket_package = {
-            "id"                : "user_data", 
-            "name"              : "user_data",
-            "className"         : "user_data",
-            "event_type"        : "append",
-            "appendToDiv"       : "container_2_user_data",
-            "data"              : user_data,
-            "show_divs"         : [],
-            "hide_divs"         : [],
-            "error"             : error_obj,
-        };
-
-        socket.emit("got_users_data_names", socket_package);
 
     });
 
     // Example of posting data into a DB via 'IO POST event' : 
     socket.on("post_data_1", async function(data){
 
-        if(is_socket_debug_on){
+        try {
+             if(is_socket_debug_on){
             console.log("post_data_1, data = " + JSON.stringify(data));
         };
     
@@ -242,7 +267,9 @@ io.on('connection', function(socket){
             socket.emit("posted_data_1",  socket_package);
 
         };
-
+        } catch (error) {
+            return;
+        };
     })
 
 });

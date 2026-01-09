@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: test
+-- Host: 127.0.0.1    Database: stark_framework_test
 -- ------------------------------------------------------
 -- Server version	8.0.39
 
@@ -8,10 +8,10 @@
 --
 -- Table structure for table `user`
 --
-DROP SCHEMA IF EXISTS  `test`;
+DROP SCHEMA IF EXISTS  `stark_framework_test`;
 
-CREATE schema test;
-USE test;
+CREATE schema stark_framework_test;
+USE stark_framework_test;
 DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -28,18 +28,38 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'User 1'),(2,'User 2'),(3,'User 3');
+INSERT INTO `user` VALUES (1,'User 1'),
+(2,'User 2'),
+(3,'User 3'),
+(4,'User 4'),
+(5,'User 5'),
+(6,'User 6'),
+(7,'User 7'),
+(8,'User 8'),
+(9,'User 9'),
+(10,'User 10'),
+(11,'User 11'),
+(12,'User 12'),
+(13,'User 13'),
+(14,'User 14'),
+(15,'User 15'),
+(16,'User 16'),
+(17,'User 17'),
+(18,'User 18'),
+(19,'User 19'),
+(20,'User 20'),
+(21,'User 21'),
+(22,'User 22'),
+(23,'User 23'),
+(24,'User 24'),
+(25,'User 25'),
+(26,'User 26'),
+(27,'User 27'),
+(28,'User 28'),
+(29,'User 29'),
+(30,'User 30');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 --
 -- Table structure for table `post_data`

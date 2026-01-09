@@ -12,13 +12,19 @@ var is_profile_util_debug_on = true;
 
 module.exports = {
 
-    get_user_names : async function(db){
+    get_user_names : async function(db, db_offset){
 
         try {
 
-            return new Promise(function(resolve, reject){ // Solution pattern from : https://stackoverflow.com/questions/67879839/mysql-query-in-node-js-is-returning-undefined
+            console.log("db_offset = " + db_offset);
 
-                db.query("SELECT user_name as value FROM user", function(error, result){
+            return new Promise(function(resolve, reject){ // Solution pattern from : https://stackoverflow.com/questions/67879839/mysql-query-in-node-js-is-returning-undefined
+                
+                if(!db_offset){
+                    db_offset = 0;
+                };
+
+                db.query("SELECT user_name as value FROM user LIMIT 5 OFFSET ?", [db_offset], function(error, result){ // Offset should match the limit to increment pagination
                     if(error){
                         console.log("🟥 Error got users = " + error);
                         reject (undefined);

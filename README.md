@@ -46,7 +46,9 @@ proof a "paradigm shift" is needed
 
 
 # <p style = "color : gold"> Ultimate goal : </p>
-    Create a shift in the way we think about how content is retrieved and rendered in the web via simple event-driven design
+    Create a shift in the way we think about how content is retrieved and 
+    
+    rendered in the web via simple event-driven design
 <br/>
 
 
@@ -65,7 +67,7 @@ proof a "paradigm shift" is needed
 # <p style = "color : gold">  Why Stark Framework : </p>
 - Even simplier than Vue :
 
-    - Stark Framework is just vanilla JS, HTML, CSS + IO events
+    - Stark Framework is just vanilla JS, HTML, templating, CSS + IO events
     - focus less on frameworks and more on creating actual value for the company
 
 - More freedom to write how you want to
@@ -138,10 +140,12 @@ proof a "paradigm shift" is needed
 <br/>
 <br/>
 
-# <p style = "color : gold"> Feature List : </p>
+# <p style = "color : gold"> Main Features List : </p>
 
     ✅ Standard "get" IO event package : 
         ✅ See example_express_project >>> "get_name" , & "get_table_data_1" ... & ""
+    🔳 Get user detail from current user ID via socket IO event
+    ✅ Simple socket IO + pagination (see function "get_user_names")
 
     🔳 Repository of re-usable components : 
         🔳 homepage logged out
@@ -266,6 +270,9 @@ and <a href="https://stackoverflow.com/questions/33094418/why-use-camel-case-for
 
 <br/>
 
+There are multiple ways to get the most out of this repo. Approach #0 is all about the philosophy of dynamic data retrieval and posting design patterns. All approaches forward are increasing applications of real-time simple data.
+
+
 ## <p style = "color : green">  Approach #0 - paradigm shift : </p>
     start using socket IO to interact with HTML + JS and truly dynamic and re-usable HTML components
 
@@ -278,17 +285,20 @@ and <a href="https://stackoverflow.com/questions/33094418/why-use-camel-case-for
 <br/>
 
 ## <p style = "color : green"> Approach #1 - running the full-stack example project :  </p>
+
+<p style="font-size : 3vw; color : yellow;" > One Time Setup : </p>
+
 1) open example express project and have at it , then : 
 
         npm install
 
         cd .\example_project_express\  
 
-2) Then create a .env file within "example_express_project" root directory
+2) Then create a .env file within "example_express_project" root directory (same level as package.json)
     
     Place these into .env file : 
 
-        db_name = "test"
+        db_name = "stark_framework_test"
         db_user_name = "root"
         db_host = "localhost"
         db_port = 3306
@@ -298,19 +308,36 @@ and <a href="https://stackoverflow.com/questions/33094418/why-use-camel-case-for
 3) Install mySQL + mySQL workbench + mySQL server
     https://dev.mysql.com/downloads/mysql/
 
-    within .env , replace pw with your mySQL password setup
-    install mySQL workbench
-    Open mySQL workbench
-    Run this new query to create the db : "stark_framework_test_db.sql"
+4) within .env : 
+        
+    1. replace db_pw with your mySQL password setup
 
 
-4) Create + populate example DB : 
+5) Create + populate example DB : 
     
-    Run "stark_framework_test_db.sql" within mySQL workbench
+    Run "stark_framework_test_db.sql" within mySQL workbench via new SQL query :
 
-5) Run the entire stack :
-    
+    <img src="New SQL query within mySQL workbench.png" style = "width: 50vw">
+
+
+
+6) Run the entire application (full-stack) :
+        
+        Open a new Terminal
+
+        cd .\example_express_project\
+
         nodemon server.js
+
+<br/>
+<p style="font-size : 3vw; color : yellow;" > How to run application on-going (after one-time setup) : </p>
+
+1. cd .\example_express_project\
+1. nodemon .\server.js
+1. Open : http://localhost:8080/
+
+Successful start of the application text you should see within terminal :
+<img src="Successful start of application.png" style = "width: 47vw">
 
 
 <br/>
@@ -330,7 +357,7 @@ and <a href="https://stackoverflow.com/questions/33094418/why-use-camel-case-for
 
         file_name.ejs
 
-2) Create route (using express):
+2) Create route (using express structure views + routes):
 
     Example : 
     ``` js
@@ -339,9 +366,18 @@ and <a href="https://stackoverflow.com/questions/33094418/why-use-camel-case-for
     })
     ```
 
-3) Place import into your html or templating file (ex. at the top of "file_name.ejs") : 
+3) Place the JS script import into your html or templating file (ex. at the top of "file_name.ejs") : 
+    
+    Copy and Paste the JS file, located within  public/js/stark_framework.js, into your public folder. For Example : 
 
-    ``` js
+    ``` 
+        public/js/stark_framework.js
+
+    ```
+
+    then within your view/HTML file place the following script :
+
+    ```js
         <script src="js/stark_framework.js"></script>
     ```
 4) Create and call events in your HTML or templating file via vanilla JS : 
@@ -354,7 +390,7 @@ and <a href="https://stackoverflow.com/questions/33094418/why-use-camel-case-for
     };
     
     ```
-5) Create the same event in your server : 
+5) Create the same event server-side (including option response depending on direction of data you need) : 
 
     Example :
     ``` js
@@ -372,7 +408,7 @@ and <a href="https://stackoverflow.com/questions/33094418/why-use-camel-case-for
 
             socket.emit("got_data_event", socket_package);
         })
-6) Handle retrieved data on the front-end : 
+6) Handle retrieved data on the front-end by placing the following into your .ejs (templating file) or JS folder. NOTE : The following is all front-end code and some parsing may be needed depending on the data structure you go with (ex. JSON structure works best) : 
 
     ```js
     socket.on("got_data_event", function(data){
@@ -391,7 +427,7 @@ and <a href="https://stackoverflow.com/questions/33094418/why-use-camel-case-for
 1) Go into "example_express_project" and take what you need
 
 2) Create standalone IO events + HTML components :
-3) Share those components within "common_components" folder
+3) Share those components within "common_components" folder (top level folder)
     
     make sure to also include the server event example please
 
@@ -490,11 +526,41 @@ Example :
 <br/>
 
 ### <p style="color: orange"> Errors and Solutions : </p>
-    
+
+<p style = "color : red"> Error : DB setup ERROR, error = Error: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client
+
+   <p style = "color : green "> Solution :
+
+1. open mySQL workbench
+1. new Script
+1. paste :
+    ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'your_password'; FLUSH PRIVILEGES;
+1. replace your_password with yours
+1. mySQL workbench green text OK
+1. return to code repo
+1. save server.js or any file if you ran nodemon
+        if not, start server via nodemon server.js
+1. Message should state "DB setup OK" in green text
+1. Good Job
+
+    SQL debug/solution : 
+    <a href = "https://stackoverflow.com/questions/7534056/mysql-root-password-change"> here </a>
+   </p>
+
+</p>
+
+<br/>
+<br/>
+<br/>
+
 <p style = "color : red"> Error       : ReferenceError : io is not defined
     
-    Solution    : 
-        Make sure io connection is AFTER server.listen
+<p style = "color : green "> Solution :
+    
+    Make sure io connection is AFTER server.listen
+</p>
+
+   
 
 <br/>
 <br/>
@@ -504,16 +570,40 @@ Example :
 <p style = "color : red"> Error : "js/stark_framework.js” was blocked due to MIME type (“text/html”)"
     
 
-    Solution : make sure your express app is using the correct location where your static content is housed, example : 
-        express.static("public/")
+<p style = "color : green "> Solution :
 
-        would be a structure of : 
-            public
-            routes
-            views
-            server.js
+make sure your express app is using the correct location where your static content is housed.
+    
+For example : 
 
+    express.static("public/")
+
+    would be a structure of : 
+        public
+        routes
+        views
+        server.js
+
+</p>
+
+<br/>
+<br/>
+<br/>
 
 Author :
 
-    - Stark
+    Stark
+
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+Sources :
+
+Express framework - example from https://expressjs.com/en/starter/hello-world.html

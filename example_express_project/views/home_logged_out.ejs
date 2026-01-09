@@ -53,9 +53,12 @@
 }
 
 .container_2_user_data{
-    position: absolute;
-    left: 20vw;
+    left: 70vw;
     top : 20vh;
+    display: none;
+    padding : 10px;
+    position: absolute;
+    background-color: white;
 }
 
 .test_table{
@@ -80,8 +83,10 @@
 .container_error_notification{
     display         : none;
     border-radius   : 7px;
+    font-weight     : 700;
+    padding         : 20px;
+    background      : white;
     border          : 3px solid red;
-    background      : rgba(36, 36, 36, 0.5);
 }
 
 .simple_post_data{
@@ -146,7 +151,7 @@
     <button type="button" id = "got_update_1" class="got_update_1" onclick="got_update_1_event_data_1()">Try Update Event</button>
 
     <button id = "button_get_table_data" class="button_get_table_data" onclick="get_table_data()">Get Table Data</button>
-    <button id = "button_get_table_data" class="button_get_users_data_names" onclick="get_users_data_names()">Get User Data</button>
+    <button id = "button_get_user_table_data" class="button_get_users_data_names" onclick="get_users_data_names()">Get User Data</button>
     
     <form id = "simple_post_data" class="simple_post_data" method="POST">
         <input type="text" id = "post_data_input" class="post_data_input">
@@ -193,7 +198,7 @@ function get_table_data(){
 };
 
 socket.on("table_1_test", function(package_data){
-    alert("Got table_1_test = " + JSON.stringify(package_data))
+    alert("Payload for table_1_test = " + JSON.stringify(package_data))
     document.getElementById("button_get_table_data").style.display = "none";
     create_stark_table(package_data);
 });
@@ -232,8 +237,10 @@ function new_stark_function_2(){
     alert("Test function 2")
 };
 
+var user_db_offset = 0;
 function get_users_data_names(){
-    socket.emit("get_users_data_names")
+    var socket_package = {"db_offset" : user_db_offset};
+    socket.emit("get_users_data_names", socket_package);
 };
 
 var name_of_platform_cookie = "YourPlatformjwtCookieName"; // replace with your value here
@@ -246,11 +253,11 @@ function get_user_cookie_from_storage(){
     for(var i = 0 ; i < all_cookies_array.length ; i++){
         
         var current_ck_full = all_cookies_array[i];
-        curr_full_split = current_ck_full.split('=');
-        stored_cookie_name = curr_full_split[0];
+        current_full_split = current_ck_full.split('=');
+        stored_cookie_name = current_full_split[0];
     
         if( stored_cookie_name.includes(name_of_platform_cookie) ) {
-            return curr_full_split[1];
+            return current_full_split[1];
         };
         
     };
@@ -273,8 +280,22 @@ function button_post_data_1(){
     socket.emit("post_data_1", socket_package);
 };
 
-socket.on("got_users_data_names", function(data){
-    create_stark_table(data); // Create from db users data
+socket.on("got_users_data_names", function(socket_data){
+
+    alert("socket_data = " + JSON.stringify(socket_data));
+
+    if(user_db_offset == 0){
+        document.getElementById("container_2_user_data").style.display = "block";
+    };
+
+    // Hide the retrieve button after no more results returned from backend :
+    if(socket_data.data.length == 0){
+        return document.getElementById("button_get_user_table_data").style.display = "none"; // To avoid additional DB calls for no more data
+    };
+
+    create_stark_table(socket_data); // Create from db users data
+    return user_db_offset+=5; // default pagination increment
+
     // alert("get_users_data_names data = " + JSON.stringify(data));
 });
 

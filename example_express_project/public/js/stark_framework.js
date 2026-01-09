@@ -1,5 +1,12 @@
 var socket = io(); // Standard universal  / default namespace
 
+/**
+ * Dynamically creates and adds data to a generic table and then applies the styling
+ * params : socket IO package
+ * returns : {void}
+ * 
+ */
+
 function create_stark_table(package){
 
     // alert("package = " + JSON.stringify(package));
@@ -8,7 +15,7 @@ function create_stark_table(package){
 
         var stark_table = document.createElement("table");
 
-        stark_table.id = package.name
+        stark_table.id = package.id
         stark_table.name = package.name
         stark_table.className = package.className
     
@@ -49,7 +56,6 @@ function create_stark_table(package){
         console.error("Stark FW : Error creating table dynamically, error = " + error);
         console.warn("Make sure the 'appendToDiv' DIV with ID is present in your file");
     };
-
 
 };
 
@@ -140,11 +146,11 @@ socket.on("set_name", function(data){
     
 });
 
-socket.on("error_msg", function(data){
+socket.on("error_msg", function(package){
 
     try {
-        document.getElementById(data.error_div).style.display = "block";
-        document.getElementById(data.error_div).innerText = package.error.error_msg 
+        document.getElementById(package.error_div).style.display = "block";
+        document.getElementById(package.error_div).innerText = package.error_msg;
     } catch (error) {
         console.error("Stark FW : Error updating error DIV value dynamically, error = " + error);
     };
