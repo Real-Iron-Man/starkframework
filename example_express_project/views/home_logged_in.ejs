@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room <%=room_id%></title>
+</head>
+
+<script src = "/socket.io/socket.io.js" ></script>
+
+<body>
+    
+    <table>
+        <tr>
+            <td>
+                Room ID
+            </td>
+            <td>
+                <%=room_id%>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button onclick="get_item(1)">More Coffee</button>
+            </td>
+            <td>
+                <img src="../images/Cup_of_coffee.svg" style="width: 10vw;">
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                # of Coffee Left
+            </td>
+            <td id = "number_coffee_left">
+
+            </td>
+        </tr>
+    </table>
+</body>
+
+<script>
+
+var socket = io();
+
+var room_id = <%-room_id%>
+
+// On join emit join event :
+socket.emit("joined_room", {"room_id" : room_id});
+
+function get_item(item_id){
+    var req_package = {
+        "room_id" : room_id,
+        "item_id" : item_id
+    };
+    socket.emit("get_item", req_package);
+};
+
+socket.on("item_update", function(item_data){
+    alert("item_update = " + JSON.stringify(item_data));
+    document.getElementById("number_coffee_left").innerText = JSON.parse(item_data.room_item_quantity);
+});
+
+</script>
+</html>

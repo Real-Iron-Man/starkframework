@@ -55,6 +55,9 @@
 .container_2_user_data{
     left: 70vw;
     top : 20vh;
+    height: 30vh;
+    overflow-y: scroll;
+    border-radius: 3px;
     display: none;
     padding : 10px;
     position: absolute;
@@ -148,6 +151,20 @@
 
     <div id = "container_2_user_data" class="container_2_user_data"></div>
 
+    <div id = "login_container" class="login_container">
+        <table>
+            <tr>
+                <td>
+                    <input type="text" placeholder="customer_room_id">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <input id = "user_id" type="text" placeholder="User ID">
+    <button onclick="go_to_login()">Login</button>
+    <button onclick="go_to_register()">Register</button>
+
     <button type="button" id = "got_update_1" class="got_update_1" onclick="got_update_1_event_data_1()">Try Update Event</button>
 
     <button id = "button_get_table_data" class="button_get_table_data" onclick="get_table_data()">Get Table Data</button>
@@ -167,6 +184,7 @@
 
 <script>
 
+var socket = io();
 // This may go away, still testing how to link functions (default versus custom) : 
 var my_function_maps =
 [
@@ -188,6 +206,17 @@ var my_function_maps =
     }
 ]
 
+var user_id; // Replace once register + login logic is implemented and user id retrieved
+function go_to_login(){
+    document.getElementById("login_container").style.display = "block";
+    var user_id = document.getElementById("user_id").value;
+    alert("user_id" + user_id);
+    window.location ="/login?id=" + user_id;
+};
+
+function go_to_register(){
+    document.getElementById("register_container").style.display = "block";
+};
 
 function got_update_1_event_data_1(){
     socket.emit("get_update_1");

@@ -66,16 +66,16 @@ module.exports = {
 function get_user_id_from_cookie_and_jwt(cookie, JWT_SECRET) {
 
     if(!cookie){
-        return undefined;
-    }
-    if (cookie) {
-      // If xp cookie exists for specific user (i.e. logged in)
-  
-      if (is_profile_util_debug_on) {
+        console.log('🟥 profile util - User Creds not found');
+        return undefined; // user id returned
+    };
+
+    // If platform cookie exists for specific user (i.e. logged in)
+    if (is_profile_util_debug_on) {
         console.log('In getUser...CookieSimple ...');
-      };
+    };
   
-      jwt.verify(cookie, JWT_SECRET, function (error, data) {
+    jwt.verify(cookie, JWT_SECRET, function (error, data) {
         if (error) {
   
           if (is_profile_util_debug_on) {
@@ -97,16 +97,6 @@ function get_user_id_from_cookie_and_jwt(cookie, JWT_SECRET) {
           return user_id;
 
         };
-      });
+    });
   
-    } else {
-      if (is_profile_util_debug_on) {
-        console.log('🟥 profile util - User Creds not found');
-      };
-  
-      user_id = undefined;
-      return user_id;
-    };
-  
-    return user_id;
-  };
+};

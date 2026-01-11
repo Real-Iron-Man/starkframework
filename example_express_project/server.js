@@ -45,7 +45,7 @@ var JWT_SECRET = process.env.JWT_SECRET; // Note : you can also use a secret man
 app.set('view engine', "ejs")
 app.set('views', __dirname +'/views')
 
-app.use(express.static("public/"));
+app.use(express.static("public"));
 
 var favicon = require('serve-favicon');
 app.use(favicon('public/favicon.ico'));
@@ -81,8 +81,48 @@ function send_socket_error_frontend(error_obj, socket){
 };
 
 var user_utils = require('./utils/users/user_utils.js')
+var room_utils = require('./utils/users/room_utils.js')
+var log_utils = require('./utils/log_utils/log_utils.js')
+var log_color = log_utils.log_color
 
 io.on('connection', function(socket){
+
+    socket.on("joined_room", function(data){
+        console.log(log_color.yellow, "User joined room # " + JSON.stringify(data));
+    });
+
+    socket.on("get_item", function(data){
+
+        try {
+
+            console.log("New Customer Request : " + JSON.stringify(data));
+            var get_room_item = room_utils.get_room_item(db, data)
+            // console.log("Final Responded inventory data = " + get_room_item);
+            // io.emit("item_update", get_room_item);
+          
+            get_room_item
+            .then(function(room_req_data){
+                console.log("Final Responded inventory data = " + JSON.stringify(room_req_data));
+                io.emit("item_update", room_req_data);
+            })
+            .catch(function(error){
+                console.log(log_color.red, " Error with get item, error = " + error);
+                return
+            });
+
+            // get_room_item.then(function(data){
+            //     console.log("Responded inventory data = " + get_room_item);
+            //     io.emit("item_update", get_room_item);
+            // })
+
+            if(!get_room_item){
+                console.log("Error getting room item");
+            };
+        } catch (error) {
+            console.log(log_color.red, " Error with get item, error = " + error);
+            return;
+        };
+    });
 
     socket.on("get_table_data_1", function(){
 

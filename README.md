@@ -515,6 +515,15 @@ Example :
 <br/>
 <br/>
 
+### Optional Project :
+Go to /login route
+Assumes : login auth is already established
+Each room ID / # is unique
+No other authentication is needed except for other 3rd party APIs (example Payments)
+
+<br/>
+<br/>
+<br/>
 
 ### Optional Steps : 
 - If you are using the example project, then change VS Code settings to not show .ejs errors :
@@ -607,3 +616,4 @@ Author :
 Sources :
 
 Express framework - example from https://expressjs.com/en/starter/hello-world.html
+Coffee SVG vector : https://publicdomainvectors.org/en/free-clipart/Vector-illustration-of-coffee-or-tea-in-cup/3966.html
