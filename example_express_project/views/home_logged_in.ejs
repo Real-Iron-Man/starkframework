@@ -21,7 +21,7 @@
         </tr>
         <tr>
             <td>
-                <button onclick="get_item(1)">More Coffee</button>
+                <button id ="button_get_item" onclick="get_item(1)">More Coffee</button>
             </td>
             <td>
                 <img src="../images/Cup_of_coffee.svg" style="width: 10vw;">
@@ -32,9 +32,7 @@
             <td>
                 # of Coffee Left
             </td>
-            <td id = "number_coffee_left">
-
-            </td>
+            <td id = "number_coffee_left"></td>
         </tr>
     </table>
 </body>
@@ -48,16 +46,47 @@ var room_id = <%-room_id%>
 // On join emit join event :
 socket.emit("joined_room", {"room_id" : room_id});
 
+socket.on("item_refresh_wait", function(){
+    document.getElementById("button_get_item").disabled = true;
+    document.getElementById("number_coffee_left").innerText = "Error try again later";
+});
+
+socket.on("item_refresh_ok", function(){
+    number_item_attempts = 0; // Reset attempts to allow query
+    localStorage.setItem("number_item_attempts", 0);
+    document.getElementById("button_get_item").disabled = false;
+    document.getElementById("number_coffee_left").innerText = "Ok to try ...";
+});
+
 function get_item(item_id){
     var req_package = {
         "room_id" : room_id,
-        "item_id" : item_id
+        "item_id" : 0,
+        "number_attempts" : number_item_attempts
     };
     socket.emit("get_item", req_package);
 };
 
+window.onload = function(){
+    get_item(0); // Test getting an undefined item on load of the page
+};
+
+// var number_item_attempts = 0;
+var number_item_attempts = localStorage.getItem("number_item_attempts") || 0; // Look in local storage on load and allows for pausing in case the page was refreshed and multiple attempts occurred prior to refresh
+
 socket.on("item_update", function(item_data){
     alert("item_update = " + JSON.stringify(item_data));
+    number_item_attempts = localStorage.getItem("number_item_attempts") || 0;
+    if(!item_data && number_item_attempts < 4){
+        number_item_attempts++;
+        localStorage.setItem("number_item_attempts", number_item_attempts); // Set persistent storage to account for page refreshes
+        document.getElementById("number_coffee_left").innerText = "Try again";
+    }else if(!item_data && number_item_attempts >= 4){
+        document.getElementById("button_get_item").disabled = true;
+        document.getElementById("number_coffee_left").innerText = "Error try again later";
+    }else if(!item_data || item_data.room_item_quantity <= 0){
+        document.getElementById("number_coffee_left").innerText = "No more items available";
+    };
     document.getElementById("number_coffee_left").innerText = JSON.parse(item_data.room_item_quantity);
 });
 

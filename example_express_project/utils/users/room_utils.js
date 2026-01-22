@@ -16,11 +16,26 @@ module.exports = {
             get_inventory_amt_data(db, req_data)
             .then(function(inventory_data){
                 console.log("Original Inventory data = " + JSON.stringify(inventory_data));
-                if(Number(inventory_data.room_item_quantity) > 0){
+                
+                try {
+                    if(Number(inventory_data.room_item_quantity) > 0){
                     return update_inventory_amt_data(db, inventory_data);
+                    }else{
+                        console.log("No more items available");
+                        return undefined
+                    };
+                } catch (error) {
+                    console.log("Error with items available");
+                    return undefined
                 };
+               
             })
-            .then(function(){
+            .then(function(result_prior){
+
+                if(!result_prior){
+                    resolve(undefined);
+                };
+
                 var result_amt_data_after_update = get_inventory_amt_data(db, req_data);
                 result_amt_data_after_update.then(function(data_returned){
                     console.log("Result amount inventory data after update = " + JSON.stringify(data_returned));

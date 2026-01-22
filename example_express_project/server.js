@@ -80,10 +80,10 @@ function send_socket_error_frontend(error_obj, socket){
 
 };
 
-var user_utils = require('./utils/users/user_utils.js')
-var room_utils = require('./utils/users/room_utils.js')
-var log_utils = require('./utils/log_utils/log_utils.js')
-var log_color = log_utils.log_color
+var user_utils = require('./utils/users/user_utils.js');
+var room_utils = require('./utils/users/room_utils.js');
+var log_utils = require('./utils/log_utils/log_utils.js');
+var log_color = log_utils.log_color;
 
 io.on('connection', function(socket){
 
@@ -94,6 +94,15 @@ io.on('connection', function(socket){
     socket.on("get_item", function(data){
 
         try {
+
+            if(data.number_attempts > 3){
+                console.log("Max item attempts reached, wait before trying again");
+                socket.emit("item_refresh_wait", {});
+                setTimeout(function(){
+                    socket.emit("item_refresh_ok", {});
+                }, 3000); // Wait 3 seconds before allowing to try again on the front end
+                return;
+            };
 
             console.log("New Customer Request : " + JSON.stringify(data));
             var get_room_item = room_utils.get_room_item(db, data)
